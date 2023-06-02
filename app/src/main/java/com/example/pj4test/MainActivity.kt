@@ -10,6 +10,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -32,6 +33,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
+    // mp3 alert
+    lateinit var mMediaPlayer: MediaPlayer
+
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -40,6 +45,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         setContentView(R.layout.activity_main)
 
         checkPermissions() // check permissions
+        mMediaPlayer = MediaPlayer.create(this, R.raw.alert)
+//        alert()
 
     }
 
@@ -80,5 +87,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onPause()
         sensorManager.unregisterListener(this)
     }
+
+    fun alert(){
+        Log.d("ALERT START", "ALERT START")
+        mMediaPlayer.start()
+        Log.d("ALERT FIN", "ALERT FIN")
+    }
+
+
 
 }

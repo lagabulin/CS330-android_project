@@ -2,8 +2,10 @@ package com.example.pj4test.fragment
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,7 +16,9 @@ import android.widget.Toast
 import androidx.camera.core.impl.utils.ContextUtil.getApplicationContext
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.example.pj4test.MainActivity
 import com.example.pj4test.ProjectConfiguration
+import com.example.pj4test.R
 import com.example.pj4test.audioInference.CarClassifier
 import com.example.pj4test.databinding.FragmentCarBinding
 
@@ -29,6 +33,10 @@ class CarFragment: Fragment(), CarClassifier.DetectorListener {
 
     // Bluetooth adapter
     var mBluetoothAdapter: BluetoothAdapter? = null
+
+    // mp3 alert
+    var mMediaPlayer: MediaPlayer? = null
+
 
     // classifiers
     lateinit var carClassifier: CarClassifier
@@ -75,6 +83,7 @@ class CarFragment: Fragment(), CarClassifier.DetectorListener {
 
                 // BLUETOOTH OFF or Warning Alert
                 bluetoothOff()
+                (activity as MainActivity).alert()
             } else {
                 carView.text = "NO CAR"
                 carView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
@@ -94,4 +103,13 @@ class CarFragment: Fragment(), CarClassifier.DetectorListener {
             }
         }
     }
+
+
+//    fun alert(){
+//        if (mMediaPlayer == null) {
+//            mMediaPlayer = MediaPlayer.create(this@, R.raw.alert)
+//            mMediaPlayer.start()
+//        }
+//    }
+
 }
