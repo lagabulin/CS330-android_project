@@ -18,9 +18,12 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.CountDownTimer
 import android.util.Log
+import java.util.*
 import kotlin.math.pow
 import kotlin.math.sqrt
+import kotlin.concurrent.timer
 
 class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventListener {
     private val TAG = "WalkFragment"
@@ -34,11 +37,16 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
         context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
+    private lateinit var acc_move : CountDownTimer
+
+    private var move = false
+
     // classifiers
     lateinit var walkClassifier: WalkClassifier
 
     // views
     lateinit var walkView: TextView
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +60,15 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        acc_move = object : CountDownTimer(3000,1000) {
+            override fun onTick(p0: Long) {
+                move = true
+            }
+            override fun onFinish() {
+                move = false
+            }
+        }
 
         walkView = fragmentWalkBinding.WalkView
 
@@ -72,11 +89,14 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
             val x = event.values[0]
             val y = event.values[1]
             val z = event.values[2]
-            val r = sqrt(x.pow(2) + y.pow(2) + z.pow(2))
-            if (r > 1) {
-                Log.d("TAG", "onSensorChanged: x: $x, y: $y, z: $z, R: $r")
-                walkClassifier.startRecording()
-                walkClassifier.startInferencing()
+            if (!move) {
+                val r = sqrt(x.pow(2) + y.pow(2) + z.pow(2))
+                if (r > 1) {
+                    Log.d("TAG", "onSensorChanged: x: $x, y: $y, z: $z, R: $r")
+                    acc_move.start()
+                    walkClassifier.startRecording()
+                    walkClassifier.startInferencing()
+                }
             }
         }
     }
