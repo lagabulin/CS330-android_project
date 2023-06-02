@@ -7,8 +7,8 @@
     tools:context=".MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/cameraFragmentContainerView"
-        android:name="com.example.pj4test.fragment.CameraFragment"
+        android:id="@+id/carFragmentContainerView"
+        android:name="com.example.pj4test.fragment.CarFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/audioFragmentContainerView"
@@ -16,7 +16,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout="@layout/fragment_camera" />
+        tools:layout="@layout/fragment_car" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/audioFragmentContainerView"
@@ -26,7 +26,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cameraFragmentContainerView"
+        app:layout_constraintTop_toBottomOf="@+id/carFragmentContainerView"
         tools:layout="@layout/fragment_audio" />
 
 

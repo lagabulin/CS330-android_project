@@ -56,9 +56,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             val x = event.values[0]
             val y = event.values[1]
             val z = event.values[2]
-            val r = sqrt(x.pow(2) + y.pow(2) + z.pow(2))
+//            val r = sqrt(x.pow(2) + y.pow(2) + z.pow(2))
 
-            Log.d("TAG", "onSensorChanged: x: $x, y: $y, z: $z, R: $r")
+//            Log.d("TAG", "onSensorChanged: x: $x, y: $y, z: $z, R: $r")
         }
     }
 
