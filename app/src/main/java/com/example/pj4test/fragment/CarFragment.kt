@@ -1,14 +1,23 @@
 package com.example.pj4test.fragment
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.camera.core.impl.utils.ContextUtil.getApplicationContext
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.pj4test.ProjectConfiguration
 import com.example.pj4test.audioInference.CarClassifier
 import com.example.pj4test.databinding.FragmentCarBinding
+
 
 class CarFragment: Fragment(), CarClassifier.DetectorListener {
     private val TAG = "CarFragment"
@@ -17,6 +26,9 @@ class CarFragment: Fragment(), CarClassifier.DetectorListener {
 
     private val fragmentCarBinding
         get() = _fragmentCarBinding!!
+
+    // Bluetooth adapter
+    var mBluetoothAdapter: BluetoothAdapter? = null
 
     // classifiers
     lateinit var carClassifier: CarClassifier
@@ -30,7 +42,7 @@ class CarFragment: Fragment(), CarClassifier.DetectorListener {
         savedInstanceState: Bundle?
     ): View {
         _fragmentCarBinding = FragmentCarBinding.inflate(inflater, container, false)
-
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         return fragmentCarBinding.root
     }
 
@@ -61,11 +73,24 @@ class CarFragment: Fragment(), CarClassifier.DetectorListener {
                 carView.setBackgroundColor(ProjectConfiguration.activeBackgroundColor)
                 carView.setTextColor(ProjectConfiguration.activeTextColor)
 
-                // BLUETOOTH ON/OFF or Warning Alert
+                // BLUETOOTH OFF or Warning Alert
+                bluetoothOff()
             } else {
                 carView.text = "NO CAR"
                 carView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
                 carView.setTextColor(ProjectConfiguration.idleTextColor)
+            }
+        }
+    }
+
+    /* Reference: https://stickode.tistory.com/219 */
+    private fun bluetoothOff(){
+        if (mBluetoothAdapter == null) {
+            // Device doesn't support Bluetooth
+//            Log.d("bluetoothAdapter","Device doesn't support Bluetooth")
+        }else{
+            if (mBluetoothAdapter?.isEnabled == true) {
+                mBluetoothAdapter?.disable()
             }
         }
     }

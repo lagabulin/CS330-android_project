@@ -1,5 +1,6 @@
 package com.example.pj4test
 
+import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.RECORD_AUDIO
 import android.content.Context
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private val TAG = "MainActivity"
 
     // permissions
-    private val permissions = arrayOf(RECORD_AUDIO, CAMERA)
+    private val permissions = arrayOf(RECORD_AUDIO, CAMERA, BLUETOOTH_CONNECT)
     private val PERMISSIONS_REQUEST = 0x0000001;
 
     private val sensorManager by lazy {
