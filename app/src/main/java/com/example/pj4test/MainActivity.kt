@@ -1,5 +1,6 @@
 package com.example.pj4test
 
+import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.RECORD_AUDIO
 import android.Manifest.permission.BLUETOOTH_CONNECT
