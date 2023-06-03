@@ -38,6 +38,7 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
     }
 
     private lateinit var acc_move : CountDownTimer
+    private var acc: TimerTask? = null
 
     private var move = false
 
@@ -80,8 +81,11 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this)
+        move = false
         walkClassifier.stopInferencing()
         walkClassifier.stopRecording()
+        acc?.cancel()
+        acc = null
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -93,9 +97,19 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
                 val r = sqrt(x.pow(2) + y.pow(2) + z.pow(2))
                 if (r > 1) {
                     Log.d("TAG", "onSensorChanged: x: $x, y: $y, z: $z, R: $r")
-                    acc_move.start()
                     walkClassifier.startRecording()
                     walkClassifier.startInferencing()
+                    move = true
+                    if (acc == null) {
+                        acc = Timer().schedule(object : fun TimerTask(){
+                            override fun run() {
+                                move = false
+                                walkClassifier.stopInferencing()
+                                walkClassifier.stopRecording()
+                                acc = null
+                            }
+                        })
+                    }
                 }
             }
         }
