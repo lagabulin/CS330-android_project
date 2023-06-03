@@ -37,7 +37,17 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
         context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
-    private lateinit var acc_move : CountDownTimer
+    private val acc_move: CountDownTimer = object : CountDownTimer(3000, 3000) {
+        override fun onTick(millisUntilFinished: Long) {
+
+        }
+
+        override fun onFinish() {
+            move = false
+            walkClassifier.stopInferencing()
+            walkClassifier.stopRecording()
+        }
+    }
     private var acc: TimerTask? = null
 
     private var move = false
@@ -62,15 +72,6 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        acc_move = object : CountDownTimer(3000,1000) {
-            override fun onTick(p0: Long) {
-                move = true
-            }
-            override fun onFinish() {
-                move = false
-            }
-        }
-
         walkView = fragmentWalkBinding.WalkView
 
         walkClassifier = WalkClassifier()
@@ -84,8 +85,7 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
         move = false
         walkClassifier.stopInferencing()
         walkClassifier.stopRecording()
-        acc?.cancel()
-        acc = null
+        acc_move?.cancel()
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -100,16 +100,7 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
                     walkClassifier.startRecording()
                     walkClassifier.startInferencing()
                     move = true
-                    if (acc == null) {
-                        acc = Timer().schedule(object : fun TimerTask(){
-                            override fun run() {
-                                move = false
-                                walkClassifier.stopInferencing()
-                                walkClassifier.stopRecording()
-                                acc = null
-                            }
-                        })
-                    }
+                    acc_move.start()
                 }
             }
         }
