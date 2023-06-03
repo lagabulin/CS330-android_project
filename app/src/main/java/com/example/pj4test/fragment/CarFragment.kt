@@ -82,8 +82,10 @@ class CarFragment: Fragment(), CarClassifier.DetectorListener {
                 carView.setTextColor(ProjectConfiguration.activeTextColor)
 
                 // BLUETOOTH OFF or Warning Alert
-                bluetoothOff()
+
+                carClassifier.stopInferencing()
                 (activity as MainActivity).alert()
+                bluetoothOff()
             } else {
                 carView.text = "NO CAR"
                 carView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
