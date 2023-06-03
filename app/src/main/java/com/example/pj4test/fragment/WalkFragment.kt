@@ -20,6 +20,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.CountDownTimer
 import android.util.Log
+import com.example.pj4test.MainActivity
 import java.util.*
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -125,6 +126,9 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
                 walkView.text = "WALK"
                 walkView.setBackgroundColor(ProjectConfiguration.activeBackgroundColor)
                 walkView.setTextColor(ProjectConfiguration.activeTextColor)
+                walkClassifier.stopRecording()
+                walkClassifier.stopInferencing()
+                (activity as MainActivity).CarStart()
             } else {
                 walkView.text = "NO WALK"
                 walkView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)

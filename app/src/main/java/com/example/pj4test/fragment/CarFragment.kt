@@ -66,12 +66,12 @@ class CarFragment: Fragment(), CarClassifier.DetectorListener {
 
     override fun onPause() {
         super.onPause()
-        carClassifier.stopInferencing()
+//        carClassifier.stopInferencing()
     }
 
     override fun onResume() {
         super.onResume()
-        carClassifier.startInferencing()
+//        carClassifier.startInferencing()
     }
 
     override fun onResults(score: Float) {

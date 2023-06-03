@@ -3,17 +3,11 @@ package com.example.pj4test
 import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.RECORD_AUDIO
-import android.R
-import android.content.Context
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -29,7 +23,22 @@ class MainActivity : AppCompatActivity() {
     private val permissions = arrayOf(RECORD_AUDIO, CAMERA, BLUETOOTH_CONNECT)
     private val PERMISSIONS_REQUEST = 0x0000001;
 
+    // mp3 alert
+    lateinit var mMediaPlayer: MediaPlayer
 
+    //timer
+    private val mainTimer: CountDownTimer = object : CountDownTimer(3000, 3000) {
+        override fun onTick(millisUntilFinished: Long) {
+
+        }
+
+        override fun onFinish() {
+            val cf: CarFragment? =
+                supportFragmentManager.findFragmentById(R.id.carFragmentContainerView) as CarFragment?
+            cf!!.carClassifier.stopRecording()
+            cf!!.carClassifier.stopInferencing()
+        }
+    }
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +64,12 @@ class MainActivity : AppCompatActivity() {
           Log.d("ALERT FIN", "ALERT FIN")
       }
 
-//    fun CarInvoke(){
-//        val cf: CarFragment? =
-//            supportFragmentManager.findFragmentById(R.id.) as CarFragment?
-//        tf.testFunction()
-//    }
+    fun CarStart(){
+        val cf: CarFragment? =
+            supportFragmentManager.findFragmentById(R.id.carFragmentContainerView) as CarFragment?
+        cf!!.carClassifier.startRecording()
+        cf!!.carClassifier.startInferencing()
+        mainTimer.start()
+    }
+
 }

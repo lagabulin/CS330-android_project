@@ -109,7 +109,6 @@ class SnapClassifier {
                 detectorListener?.onResults(score)
             }
         }
-        Timer().schedule
     }
 
     fun stopInferencing() {

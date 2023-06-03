@@ -36,9 +36,9 @@ class CarClassifier {
         classifier = AudioClassifier.createFromFile(context, YAMNET_MODEL)
         Log.d(TAG, "Model loaded from: $YAMNET_MODEL")
         audioInitialize()
-        startRecording()
+//        startRecording()
 
-        startInferencing()
+//        startInferencing()
     }
 
     /**
@@ -64,7 +64,7 @@ class CarClassifier {
      * This method make recorder start recording.
      * After this function, the microphone is ready for reading.
      */
-    private fun startRecording() {
+    fun startRecording() {
         recorder.startRecording()
         Log.d(TAG, "record started!")
     }
@@ -75,7 +75,7 @@ class CarClassifier {
      * This method make recorder stop recording.
      * After this function, the microphone is unavailable for reading.
      */
-    private fun stopRecording() {
+    fun stopRecording() {
         recorder.stop()
         Log.d(TAG, "record stopped.")
     }
