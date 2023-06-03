@@ -10,7 +10,7 @@ import com.example.pj4test.ProjectConfiguration
 import com.example.pj4test.audioInference.SnapClassifier
 import com.example.pj4test.databinding.FragmentAudioBinding
 
-class AudioFragment: Fragment(), SnapClassifier.DetectorListener {
+class  AudioFragment: Fragment(), SnapClassifier.DetectorListener {
     private val TAG = "AudioFragment"
 
     private var _fragmentAudioBinding: FragmentAudioBinding? = null
