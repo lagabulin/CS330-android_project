@@ -26,7 +26,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.concurrent.timer
 
-class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventListener {
+class  WalkFragment: Fragment(), WalkClassifier.DetectorListener {
     private val TAG = "WalkFragment"
 
     private var _fragmentWalkBinding: FragmentWalkBinding? = null
@@ -38,17 +38,17 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
         context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
-    private val acc_move: CountDownTimer = object : CountDownTimer(3000, 3000) {
-        override fun onTick(millisUntilFinished: Long) {
-
-        }
-
-        override fun onFinish() {
-            move = false
-            walkClassifier.stopInferencing()
-            walkClassifier.stopRecording()
-        }
-    }
+//    private val acc_move: CountDownTimer = object : CountDownTimer(3000, 3000) {
+//        override fun onTick(millisUntilFinished: Long) {
+//
+//        }
+//
+//        override fun onFinish() {
+//            move = false
+//            walkClassifier.stopInferencing()
+//            walkClassifier.stopRecording()
+//        }
+//    }
     private var acc: TimerTask? = null
 
     private var move = false
@@ -82,53 +82,54 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
 
     override fun onPause() {
         super.onPause()
-        sensorManager.unregisterListener(this)
-        move = false
+//        sensorManager.unregisterListener(this)
+//        move = false
         walkClassifier.stopInferencing()
-        walkClassifier.stopRecording()
-        acc_move?.cancel()
+//        walkClassifier.stopRecording()
+//        acc_move?.cancel()
     }
 
-    override fun onSensorChanged(event: SensorEvent?) {
-        event?.let{
-            val x = event.values[0]
-            val y = event.values[1]
-            val z = event.values[2]
-            if (!move) {
-                val r = sqrt(x.pow(2) + y.pow(2) + z.pow(2))
-                if (r > 1) {
-                    Log.d("TAG", "onSensorChanged: x: $x, y: $y, z: $z, R: $r")
-                    walkClassifier.startRecording()
-                    walkClassifier.startInferencing()
-                    move = true
-                    acc_move.start()
-                }
-            }
-        }
-    }
+//    override fun onSensorChanged(event: SensorEvent?) {
+//        event?.let{
+//            val x = event.values[0]
+//            val y = event.values[1]
+//            val z = event.values[2]
+//            if (!move) {
+//                val r = sqrt(x.pow(2) + y.pow(2) + z.pow(2))
+//                if (r > 1) {
+//                    Log.d("TAG", "onSensorChanged: x: $x, y: $y, z: $z, R: $r")
+//                    walkClassifier.startRecording()
+//                    walkClassifier.startInferencing()
+////                    move = true
+////                    acc_move.start()
+//                }
+//            }
+//        }
+//    }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-//        TODO("Not yet implemented")
-    }
+//    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+////        TODO("Not yet implemented")
+//    }
 
     override fun onResume() {
         super.onResume()
-        sensorManager.registerListener(this,
-            sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
-            SensorManager.SENSOR_DELAY_NORMAL
-        )
-        //walkClassifier.startInferencing()
+//        sensorManager.registerListener(this,
+//            sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
+//            SensorManager.SENSOR_DELAY_NORMAL
+//        )
+        walkClassifier.startInferencing()
     }
 
     override fun onResults(score: Float) {
         activity?.runOnUiThread {
             if (score > WalkClassifier.THRESHOLD) {
+                Log.d("tag","yupyup")
                 walkView.text = "WALK"
                 walkView.setBackgroundColor(ProjectConfiguration.activeBackgroundColor)
                 walkView.setTextColor(ProjectConfiguration.activeTextColor)
-                walkClassifier.stopRecording()
-                walkClassifier.stopInferencing()
-                (activity as MainActivity).CarStart()
+//                walkClassifier.stopRecording()
+//                walkClassifier.stopInferencing()
+//                (activity as MainActivity).CarStart()
             } else {
                 walkView.text = "NO WALK"
                 walkView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)

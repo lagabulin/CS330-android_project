@@ -104,6 +104,8 @@ class PersonClassifier {
         objectDetectorListener = listener
     }
 
+
+
     companion object {
         const val THRESHOLD: Float = 0.5f
         const val NUM_THREADS: Int = 2

@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onFinish() {
             val cf: CarFragment? =
-                supportFragmentManager.findFragmentById(R.id.carFragmentContainerView) as CarFragment?
+                supportFragmentManager.findFragmentById(R.id.cameraFragmentContainerView) as CarFragment?
             cf!!.carClassifier.stopRecording()
             cf!!.carClassifier.stopInferencing()
         }
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
     fun CarStart(){
         val cf: CarFragment? =
-            supportFragmentManager.findFragmentById(R.id.carFragmentContainerView) as CarFragment?
+            supportFragmentManager.findFragmentById(R.id.cameraFragmentContainerView) as CarFragment?
         cf!!.carClassifier.startRecording()
         cf!!.carClassifier.startInferencing()
         mainTimer.start()

@@ -16,8 +16,10 @@
 package com.example.pj4test.fragment
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -35,6 +37,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.pj4test.MainActivity
 import com.example.pj4test.ProjectConfiguration
 import java.util.LinkedList
 import java.util.concurrent.ExecutorService
@@ -61,6 +64,12 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
+
+    // Bluetooth adapter
+    var mBluetoothAdapter: BluetoothAdapter? = null
+
+    // mp3 alert
+    var mMediaPlayer: MediaPlayer? = null
 
     override fun onDestroyView() {
         _fragmentCameraBinding = null
@@ -201,13 +210,19 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
             )
             
             // find at least one bounding box of the person
-            val isPersonDetected: Boolean = results!!.find { it.categories[0].label == "person" } != null
+            val isPersonDetected: Boolean = results!!.find { it.categories[0].label == "car" } != null
             
             // change UI according to the result
             if (isPersonDetected) {
                 personView.text = "PERSON"
                 personView.setBackgroundColor(ProjectConfiguration.activeBackgroundColor)
                 personView.setTextColor(ProjectConfiguration.activeTextColor)
+
+                // BLUETOOTH OFF or Warning Alert
+
+//                carClassifier.stopInferencing()
+                (activity as MainActivity).alert()
+                bluetoothOff()
             } else {
                 personView.text = "NO PERSON"
                 personView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
@@ -218,7 +233,17 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
             fragmentCameraBinding.overlay.invalidate()
         }
     }
-
+    /* Reference: https://stickode.tistory.com/219 */
+    private fun bluetoothOff(){
+        if (mBluetoothAdapter == null) {
+            // Device doesn't support Bluetooth
+//            Log.d("bluetoothAdapter","Device doesn't support Bluetooth")
+        }else{
+            if (mBluetoothAdapter?.isEnabled == true) {
+                mBluetoothAdapter?.disable()
+            }
+        }
+    }
     override fun onObjectDetectionError(error: String) {
         activity?.runOnUiThread {
             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()

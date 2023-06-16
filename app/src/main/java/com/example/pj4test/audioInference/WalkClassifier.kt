@@ -36,9 +36,9 @@ class WalkClassifier {
         classifier = AudioClassifier.createFromFile(context, YAMNET_MODEL)
         Log.d(TAG, "Model loaded from: $YAMNET_MODEL")
         audioInitialize()
-        //startRecording()
+        startRecording()
 
-        //startInferencing()
+        startInferencing()
     }
 
     /**
@@ -95,18 +95,18 @@ class WalkClassifier {
              */
     fun inference(): Float {
         tensor.load(recorder)
-        Log.d(TAG, tensor.tensorBuffer.shape.joinToString(","))
+//        Log.d(TAG, tensor.tensorBuffer.shape.joinToString(","))
         val output = classifier.classify(tensor)
-        Log.d(TAG, output.toString())
+//        Log.d(TAG, output.toString())
 
-        return output[0].categories.find { it.label == "Walk, footsteps" }!!.score
+        return output[0].categories.find { it.label == "Vehicle horn, car horn, honking" }!!.score
     }
 
     fun startInferencing() {
         if (task == null) {
             task = Timer().scheduleAtFixedRate(0, REFRESH_INTERVAL_MS) {
-                val score = inference()
-                detectorListener?.onResults(score)
+                val scores = inference()
+                detectorListener?.onResults(scores)
             }
         }
     }
