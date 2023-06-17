@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.pj4test.ProjectConfiguration
-import com.example.pj4test.audioInference.HonkClassifier
-import com.example.pj4test.databinding.FragmentHonkBinding
+import com.example.pj4test.audioInference.WalkClassifier
+import com.example.pj4test.databinding.FragmentWalkBinding
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
@@ -26,13 +26,13 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.concurrent.timer
 
-class  HonkFragment: Fragment(), HonkClassifier.DetectorListener, SensorEventListener {
-    private val TAG = "HonkFragment"
+class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventListener {
+    private val TAG = "WalkFragment"
 
-    private var _fragmentHonkBinding: FragmentHonkBinding? = null
+    private var _fragmentWalkBinding: FragmentWalkBinding? = null
 
-    private val fragmentHonkBinding
-        get() = _fragmentHonkBinding!!
+    private val fragmentWalkBinding
+        get() = _fragmentWalkBinding!!
 
     private val sensorManager by lazy {
         context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -45,19 +45,19 @@ class  HonkFragment: Fragment(), HonkClassifier.DetectorListener, SensorEventLis
 //
 //        override fun onFinish() {
 //            move = false
-//            honkClassifier.stopInferencing()
-//            honkClassifier.stopRecording()
+//            walkClassifier.stopInferencing()
+//            walkClassifier.stopRecording()
 //        }
 //    }
     private var acc: TimerTask? = null
 
-    private var move = false
+    var recording = false
 
     // classifiers
-    lateinit var honkClassifier: HonkClassifier
+    lateinit var walkClassifier: WalkClassifier
 
     // views
-    lateinit var honkView: TextView
+    lateinit var walkView: TextView
 
 
     override fun onCreateView(
@@ -65,51 +65,50 @@ class  HonkFragment: Fragment(), HonkClassifier.DetectorListener, SensorEventLis
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _fragmentHonkBinding = FragmentHonkBinding.inflate(inflater, container, false)
+        _fragmentWalkBinding = FragmentWalkBinding.inflate(inflater, container, false)
 
-        return fragmentHonkBinding.root
+        return fragmentWalkBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        honkView = fragmentHonkBinding.HonkView
+        walkView = fragmentWalkBinding.WalkView
 
-        honkClassifier = HonkClassifier()
-        honkClassifier.initialize(requireContext())
-        honkClassifier.setDetectorListener(this)
+        walkClassifier = WalkClassifier()
+        walkClassifier.initialize(requireContext())
+        walkClassifier.setDetectorListener(this)
     }
 
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this)
 //        move = false
-        honkClassifier.stopInferencing()
-//        honkClassifier.stopRecording()
+        walkClassifier.stopInferencing()
+//        walkClassifier.stopRecording()
 //        acc_move?.cancel()
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let{
+            walkClassifier.fast = false
+            walkClassifier.slow = false
             val x = event.values[0]
             val y = event.values[1]
             val z = event.values[2]
-            if (!move) {
-                val r = sqrt(x.pow(2) + y.pow(2) + z.pow(2))
-                if (r > 1) {
-                    Log.d("TAG", "onSensorChanged: x: $x, y: $y, z: $z, R: $r")
-                    honkClassifier.startRecording()
-                    honkClassifier.startInferencing()
-////                    move = true
-////                    acc_move.start()
-//                }
-//            }
-//        }
-//    }
+            val r = sqrt(x.pow(2) + y.pow(2) + z.pow(2))
+            if (r < 1) {
+                walkClassifier.slow = true
+            }
+            else if (r > 5) {
+                walkClassifier.fast = true
+            }
+        }
+    }
 
-//    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-////        TODO("Not yet implemented")
-//    }
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+//        TODO("Not yet implemented")
+    }
 
     override fun onResume() {
         super.onResume()
@@ -117,23 +116,24 @@ class  HonkFragment: Fragment(), HonkClassifier.DetectorListener, SensorEventLis
             sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
             SensorManager.SENSOR_DELAY_NORMAL
         )
-        honkClassifier.startInferencing()
+        walkClassifier.startInferencing()
     }
 
     override fun onResults(score: Float) {
         activity?.runOnUiThread {
-            if (score > HonkClassifier.THRESHOLD) {
+            if (score > WalkClassifier.THRESHOLD && !recording){
+                recording = true
                 Log.d("tag","yupyup")
-                honkView.text = "HONK"
-                honkView.setBackgroundColor(ProjectConfiguration.activeBackgroundColor)
-                honkView.setTextColor(ProjectConfiguration.activeTextColor)
-//                honkClassifier.stopRecording()
-//                honkClassifier.stopInferencing()
-//                (activity as MainActivity).CarStart()
+                walkView.text = "WALK"
+                walkView.setBackgroundColor(ProjectConfiguration.activeBackgroundColor)
+                walkView.setTextColor(ProjectConfiguration.activeTextColor)
+                walkClassifier.stopRecording()
+                walkClassifier.stopInferencing()
+                (activity as MainActivity).cameraStart()
             } else {
-                honkView.text = "NO HONK"
-                honkView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
-                honkView.setTextColor(ProjectConfiguration.idleTextColor)
+                walkView.text = "NO WALK"
+                walkView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
+                walkView.setTextColor(ProjectConfiguration.idleTextColor)
             }
         }
     }

@@ -51,7 +51,7 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
 
     private var _fragmentCameraBinding: FragmentCameraBinding? = null
 
-    private val fragmentCameraBinding
+    val fragmentCameraBinding
         get() = _fragmentCameraBinding!!
     
     private lateinit var personView: TextView
@@ -63,7 +63,7 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
     private var camera: Camera? = null
 
     /** Blocking camera operations are performed using this executor */
-    private lateinit var cameraExecutor: ExecutorService
+    lateinit var cameraExecutor: ExecutorService
 
     // Bluetooth adapter
     var mBluetoothAdapter: BluetoothAdapter? = null
@@ -101,16 +101,17 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         // Wait for the views to be properly laid out
-        fragmentCameraBinding.viewFinder.post {
-            // Set up the camera and its use cases
-            setUpCamera()
-        }
+//        fragmentCameraBinding.viewFinder.post {
+//            // Set up the camera and its use cases
+//            setUpCamera()
+//        }
 
         personView = fragmentCameraBinding.PersonView
     }
 
+
     // Initialize CameraX, and prepare to bind the camera use cases
-    private fun setUpCamera() {
+    fun setUpCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener(
             {
@@ -225,8 +226,10 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
                 // BLUETOOTH OFF or Warning Alert
 
 //                carClassifier.stopInferencing()
-                (activity as MainActivity).alert()
-                bluetoothOff()
+//                (activity as MainActivity).alert()
+//                bluetoothOff()
+
+
             } else {
                 personView.text = "NO PERSON"
                 personView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
@@ -247,6 +250,12 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
                 mBluetoothAdapter?.disable()
             }
         }
+    }
+
+    fun unbind(){
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        val cameraProvider = cameraProviderFuture.get()
+        cameraProvider.unbindAll()
     }
     override fun onObjectDetectionError(error: String) {
         activity?.runOnUiThread {

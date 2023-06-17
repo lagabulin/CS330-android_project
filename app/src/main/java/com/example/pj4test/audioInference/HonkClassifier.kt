@@ -12,21 +12,22 @@ import kotlin.concurrent.scheduleAtFixedRate
 import kotlin.concurrent.timer
 
 
-class HonkClassifier {
+class WalkClassifier {
     // Libraries for audio classification
     lateinit var classifier: AudioClassifier
     lateinit var recorder: AudioRecord
     lateinit var tensor: TensorAudio
 
-    var time = 0
-    var fast = false
-    var slow = false
-
     // Listener that will be handle the result of this classifier
     private var detectorListener: DetectorListener? = null
 
     // TimerTask
-    // private var timerTask = null
+    private var task: TimerTask? = null
+    private var timerTask: TimerTask? = null
+
+    var time = 0
+    var fast = false
+    var slow = false
 
     /**
      * initialize
@@ -45,6 +46,10 @@ class HonkClassifier {
 
         startInferencing()
     }
+
+//    fun inferencetimer () {
+//
+//    }
 
     /**
      * audioInitialize
@@ -100,28 +105,32 @@ class HonkClassifier {
              */
     fun inference(): Float {
         tensor.load(recorder)
-//        Log.d(TAG, tensor.tensorBuffer.shape.joinToString(","))
+        Log.d(TAG, tensor.tensorBuffer.shape.joinToString(","))
         val output = classifier.classify(tensor)
-//        Log.d(TAG, output.toString())
+        Log.d(TAG, output.toString())
 
         return output[0].categories.find { it.label == "Vehicle horn, car horn, honking" }!!.score
     }
 
-    fun inferencetimer () {
-        val timerTask = kotlin.concurrent.timer(period = 30) {
-            time++
+    fun startInferencing() {
+        task = Timer().scheduleAtFixedRate(0, REFRESH_INTERVAL_MS) {
+            time ++
             if (fast) {
+                Log.d("inferencetimer","fast")
                 val fscore = inference()
                 detectorListener?.onResults(fscore)
             }
             else if (slow) {
                 if (time % 10 == 0) {
+                    Log.d("inferencetimer","slow")
                     val sscore = inference()
                     detectorListener?.onResults(sscore)
                 }
             }
             else {
                 if (time % 5 == 0) {
+                    Log.d("inferencetimer","normal")
+//                    Log.d("time",time.toString())
                     val score = inference()
                     detectorListener?.onResults(score)
                 }
@@ -129,18 +138,11 @@ class HonkClassifier {
         }
     }
 
-    fun startInferencing() {
-        if (task == null) {
-            task = Timer().scheduleAtFixedRate(0, REFRESH_INTERVAL_MS) {
-                val score = inference()
-                detectorListener?.onResults(score)
-            }
-        }
-    }
-
     fun stopInferencing() {
         task?.cancel()
         task = null
+//        timerTask?.cancel()
+//        timerTask = null
     }
 
     /**
@@ -174,7 +176,7 @@ class HonkClassifier {
      * @property    THRESHOLD           threshold of the score to classify sound as a horn sound
      */
     companion object {
-        const val TAG = "HonkClassifier"
+        const val TAG = "WalkClassifier"
 
         const val REFRESH_INTERVAL_MS = 33L
         const val YAMNET_MODEL = "yamnet_classification.tflite"
