@@ -220,9 +220,7 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
                 personView.setTextColor(ProjectConfiguration.activeTextColor)
 
                 // BLUETOOTH OFF or Warning Alert
-
-//                carClassifier.stopInferencing()
-//                (activity as MainActivity).alert()
+                (activity as MainActivity).alert()
 //                bluetoothOff()
 
 
