@@ -124,6 +124,10 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
         )
     }
 
+    fun stop_test() {
+        cameraExecutor.shutdown()
+    }
+
     // Declare and bind preview, capture and analysis use cases
     @SuppressLint("UnsafeOptInUsageError")
     private fun bindCameraUseCases(cameraProvider: ProcessCameraProvider) {

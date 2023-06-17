@@ -9,19 +9,24 @@ import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlin.concurrent.timer
 
 
-class WalkClassifier {
+class HonkClassifier {
     // Libraries for audio classification
     lateinit var classifier: AudioClassifier
     lateinit var recorder: AudioRecord
     lateinit var tensor: TensorAudio
 
+    var time = 0
+    var fast = false
+    var slow = false
+
     // Listener that will be handle the result of this classifier
     private var detectorListener: DetectorListener? = null
 
     // TimerTask
-    private var task: TimerTask? = null
+    // private var timerTask = null
 
     /**
      * initialize
@@ -102,11 +107,33 @@ class WalkClassifier {
         return output[0].categories.find { it.label == "Vehicle horn, car horn, honking" }!!.score
     }
 
+    fun inferencetimer () {
+        val timerTask = kotlin.concurrent.timer(period = 30) {
+            time++
+            if (fast) {
+                val fscore = inference()
+                detectorListener?.onResults(fscore)
+            }
+            else if (slow) {
+                if (time % 10 == 0) {
+                    val sscore = inference()
+                    detectorListener?.onResults(sscore)
+                }
+            }
+            else {
+                if (time % 5 == 0) {
+                    val score = inference()
+                    detectorListener?.onResults(score)
+                }
+            }
+        }
+    }
+
     fun startInferencing() {
         if (task == null) {
             task = Timer().scheduleAtFixedRate(0, REFRESH_INTERVAL_MS) {
-                val scores = inference()
-                detectorListener?.onResults(scores)
+                val score = inference()
+                detectorListener?.onResults(score)
             }
         }
     }
@@ -147,7 +174,7 @@ class WalkClassifier {
      * @property    THRESHOLD           threshold of the score to classify sound as a horn sound
      */
     companion object {
-        const val TAG = "WalkClassifier"
+        const val TAG = "HonkClassifier"
 
         const val REFRESH_INTERVAL_MS = 33L
         const val YAMNET_MODEL = "yamnet_classification.tflite"

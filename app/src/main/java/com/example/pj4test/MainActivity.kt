@@ -16,7 +16,7 @@ import com.example.pj4test.fragment.CarFragment
 import java.util.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
     private val TAG = "MainActivity"
 
     // permissions
@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     // mp3 alert
     lateinit var mMediaPlayer: MediaPlayer
+
 
     //timer
     private val mainTimer: CountDownTimer = object : CountDownTimer(3000, 3000) {
@@ -63,6 +64,7 @@ class MainActivity : AppCompatActivity() {
           mMediaPlayer.start()
           Log.d("ALERT FIN", "ALERT FIN")
       }
+
 
     fun CarStart(){
         val cf: CarFragment? =

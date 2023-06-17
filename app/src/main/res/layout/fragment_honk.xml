@@ -5,12 +5,12 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/WalkView"
+        android:id="@+id/HonkView"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:gravity="center"
         android:background="@color/white"
-        android:text="NO WALK"
+        android:text="NO HONK"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
