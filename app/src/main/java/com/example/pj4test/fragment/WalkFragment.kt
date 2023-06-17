@@ -124,14 +124,14 @@ class  WalkFragment: Fragment(), WalkClassifier.DetectorListener, SensorEventLis
             if (score > WalkClassifier.THRESHOLD && !recording){
                 recording = true
                 Log.d("tag","yupyup")
-                walkView.text = "WALK"
+                walkView.text = "DANGER"
                 walkView.setBackgroundColor(ProjectConfiguration.activeBackgroundColor)
                 walkView.setTextColor(ProjectConfiguration.activeTextColor)
-                walkClassifier.stopRecording()
                 walkClassifier.stopInferencing()
+                walkClassifier.stopRecording()
                 (activity as MainActivity).cameraStart()
             } else {
-                walkView.text = "NO WALK"
+                walkView.text = "SAFE"
                 walkView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
                 walkView.setTextColor(ProjectConfiguration.idleTextColor)
             }

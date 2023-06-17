@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             val wf: WalkFragment? =
                 supportFragmentManager.findFragmentById(R.id.walkFragmentContainerView) as WalkFragment?
             wf!!.recording = false
+            wf!!.walkClassifier.audioInitialize()
             wf!!.walkClassifier.startRecording()
             wf!!.walkClassifier.startInferencing()
         }

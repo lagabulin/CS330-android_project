@@ -56,7 +56,7 @@ class WalkClassifier {
      *
      * Create the instance of TensorAudio and AudioRecord from the AudioClassifier.
      */
-    private fun audioInitialize() {
+    fun audioInitialize() {
         tensor = classifier.createInputTensorAudio()
 
         val format = classifier.requiredTensorAudioFormat

@@ -215,7 +215,7 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
             
             // change UI according to the result
             if (isPersonDetected) {
-                personView.text = "PERSON"
+                personView.text = "CAR DETECTED"
                 personView.setBackgroundColor(ProjectConfiguration.activeBackgroundColor)
                 personView.setTextColor(ProjectConfiguration.activeTextColor)
 
@@ -225,7 +225,7 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
 
 
             } else {
-                personView.text = "NO PERSON"
+                personView.text = "NO CAR"
                 personView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
                 personView.setTextColor(ProjectConfiguration.idleTextColor)
             }
