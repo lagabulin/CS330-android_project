@@ -9,6 +9,7 @@ import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlin.concurrent.timer
 
 
 class WalkClassifier {
@@ -22,6 +23,11 @@ class WalkClassifier {
 
     // TimerTask
     private var task: TimerTask? = null
+    private var timerTask: TimerTask? = null
+
+    var time = 0
+    var fast = false
+    var slow = false
 
     /**
      * initialize
@@ -40,6 +46,10 @@ class WalkClassifier {
 
         startInferencing()
     }
+
+//    fun inferencetimer () {
+//
+//    }
 
     /**
      * audioInitialize
@@ -95,18 +105,35 @@ class WalkClassifier {
              */
     fun inference(): Float {
         tensor.load(recorder)
-//        Log.d(TAG, tensor.tensorBuffer.shape.joinToString(","))
+        Log.d(TAG, tensor.tensorBuffer.shape.joinToString(","))
         val output = classifier.classify(tensor)
-//        Log.d(TAG, output.toString())
+        Log.d(TAG, output.toString())
 
         return output[0].categories.find { it.label == "Vehicle horn, car horn, honking" }!!.score
     }
 
     fun startInferencing() {
-        if (task == null) {
-            task = Timer().scheduleAtFixedRate(0, REFRESH_INTERVAL_MS) {
-                val scores = inference()
-                detectorListener?.onResults(scores)
+        task = Timer().scheduleAtFixedRate(0, REFRESH_INTERVAL_MS) {
+            time ++
+            if (fast) {
+                Log.d("inferencetimer","fast")
+                val fscore = inference()
+                detectorListener?.onResults(fscore)
+            }
+            else if (slow) {
+                if (time % 10 == 0) {
+                    Log.d("inferencetimer","slow")
+                    val sscore = inference()
+                    detectorListener?.onResults(sscore)
+                }
+            }
+            else {
+                if (time % 5 == 0) {
+                    Log.d("inferencetimer","normal")
+//                    Log.d("time",time.toString())
+                    val score = inference()
+                    detectorListener?.onResults(score)
+                }
             }
         }
     }
@@ -114,6 +141,8 @@ class WalkClassifier {
     fun stopInferencing() {
         task?.cancel()
         task = null
+//        timerTask?.cancel()
+//        timerTask = null
     }
 
     /**

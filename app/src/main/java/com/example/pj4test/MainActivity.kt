@@ -12,7 +12,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.example.pj4test.fragment.CameraFragment
 import com.example.pj4test.fragment.CarFragment
+import com.example.pj4test.fragment.WalkFragment
 import java.util.*
 
 
@@ -27,16 +29,21 @@ class MainActivity : AppCompatActivity() {
     lateinit var mMediaPlayer: MediaPlayer
 
     //timer
-    private val mainTimer: CountDownTimer = object : CountDownTimer(3000, 3000) {
+    private val mainTimer: CountDownTimer = object : CountDownTimer(10000, 10000) {
         override fun onTick(millisUntilFinished: Long) {
 
         }
 
         override fun onFinish() {
-            val cf: CarFragment? =
-                supportFragmentManager.findFragmentById(R.id.cameraFragmentContainerView) as CarFragment?
-            cf!!.carClassifier.stopRecording()
-            cf!!.carClassifier.stopInferencing()
+            val cf: CameraFragment? =
+                supportFragmentManager.findFragmentById(R.id.cameraFragmentContainerView) as CameraFragment?
+            cf!!.unbind()
+
+            val wf: WalkFragment? =
+                supportFragmentManager.findFragmentById(R.id.walkFragmentContainerView) as WalkFragment?
+            wf!!.recording = false
+            wf!!.walkClassifier.startRecording()
+            wf!!.walkClassifier.startInferencing()
         }
     }
     @RequiresApi(Build.VERSION_CODES.M)
@@ -64,11 +71,12 @@ class MainActivity : AppCompatActivity() {
           Log.d("ALERT FIN", "ALERT FIN")
       }
 
-    fun CarStart(){
-        val cf: CarFragment? =
-            supportFragmentManager.findFragmentById(R.id.cameraFragmentContainerView) as CarFragment?
-        cf!!.carClassifier.startRecording()
-        cf!!.carClassifier.startInferencing()
+    fun cameraStart(){
+        val cf: CameraFragment? =
+            supportFragmentManager.findFragmentById(R.id.cameraFragmentContainerView) as CameraFragment?
+        cf!!.fragmentCameraBinding.viewFinder.post{
+            cf!!.setUpCamera()
+        }
         mainTimer.start()
     }
 
