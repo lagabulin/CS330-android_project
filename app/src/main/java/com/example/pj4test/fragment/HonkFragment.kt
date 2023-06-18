@@ -38,17 +38,6 @@ class  HonkFragment: Fragment(), HonkClassifier.DetectorListener, SensorEventLis
         context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
-//    private val acc_move: CountDownTimer = object : CountDownTimer(3000, 3000) {
-//        override fun onTick(millisUntilFinished: Long) {
-//
-//        }
-//
-//        override fun onFinish() {
-//            move = false
-//            walkClassifier.stopInferencing()
-//            walkClassifier.stopRecording()
-//        }
-//    }
     private var acc: TimerTask? = null
 
     var recording = false

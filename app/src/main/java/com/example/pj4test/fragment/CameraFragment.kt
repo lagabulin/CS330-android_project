@@ -221,7 +221,7 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
 
                 // BLUETOOTH OFF or Warning Alert
                 (activity as MainActivity).alert()
-//                bluetoothOff()
+                // bluetoothOff()
 
 
             } else {
@@ -238,7 +238,7 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
     private fun bluetoothOff(){
         if (mBluetoothAdapter == null) {
             // Device doesn't support Bluetooth
-//            Log.d("bluetoothAdapter","Device doesn't support Bluetooth")
+            // Log.d("bluetoothAdapter","Device doesn't support Bluetooth")
         }else{
             if (mBluetoothAdapter?.isEnabled == true) {
                 mBluetoothAdapter?.disable()
