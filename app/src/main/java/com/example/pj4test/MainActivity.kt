@@ -13,8 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.pj4test.fragment.CameraFragment
-import com.example.pj4test.fragment.CarFragment
-import com.example.pj4test.fragment.WalkFragment
+import com.example.pj4test.fragment.HonkFragment
 import java.util.*
 
 
@@ -39,12 +38,12 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.findFragmentById(R.id.cameraFragmentContainerView) as CameraFragment?
             cf!!.unbind()
 
-            val wf: WalkFragment? =
-                supportFragmentManager.findFragmentById(R.id.walkFragmentContainerView) as WalkFragment?
-            wf!!.recording = false
-            wf!!.walkClassifier.audioInitialize()
-            wf!!.walkClassifier.startRecording()
-            wf!!.walkClassifier.startInferencing()
+            val hf: HonkFragment? =
+                supportFragmentManager.findFragmentById(R.id.honkFragmentContainerView) as HonkFragment?
+            hf!!.recording = false
+            hf!!.honkClassifier.audioInitialize()
+            hf!!.honkClassifier.startRecording()
+            hf!!.honkClassifier.startInferencing()
         }
     }
     @RequiresApi(Build.VERSION_CODES.M)
@@ -55,7 +54,6 @@ class MainActivity : AppCompatActivity() {
         checkPermissions() // check permissions
 
         mMediaPlayer = MediaPlayer.create(this, R.raw.alert)
-//        alert()
     }
 
     private fun checkPermissions() {

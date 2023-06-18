@@ -9,9 +9,10 @@ import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlin.concurrent.timer
 
 
-class CarClassifier {
+class HonkClassifier {
     // Libraries for audio classification
     lateinit var classifier: AudioClassifier
     lateinit var recorder: AudioRecord
@@ -22,6 +23,11 @@ class CarClassifier {
 
     // TimerTask
     private var task: TimerTask? = null
+    private var timerTask: TimerTask? = null
+
+    var time = 0
+    var fast = false
+    var slow = false
 
     /**
      * initialize
@@ -36,17 +42,18 @@ class CarClassifier {
         classifier = AudioClassifier.createFromFile(context, YAMNET_MODEL)
         Log.d(TAG, "Model loaded from: $YAMNET_MODEL")
         audioInitialize()
-//        startRecording()
+        startRecording()
 
-//        startInferencing()
+        startInferencing()
     }
+
 
     /**
      * audioInitialize
      *
      * Create the instance of TensorAudio and AudioRecord from the AudioClassifier.
      */
-    private fun audioInitialize() {
+    fun audioInitialize() {
         tensor = classifier.createInputTensorAudio()
 
         val format = classifier.requiredTensorAudioFormat
@@ -103,10 +110,27 @@ class CarClassifier {
     }
 
     fun startInferencing() {
-        if (task == null) {
-            task = Timer().scheduleAtFixedRate(0, REFRESH_INTERVAL_MS) {
-                val score = inference()
-                detectorListener?.onResults(score)
+        task = Timer().scheduleAtFixedRate(0, REFRESH_INTERVAL_MS) {
+            time ++
+            if (fast) {
+                Log.d("inferencetimer","fast")
+                val fscore = inference()
+                detectorListener?.onResults(fscore)
+            }
+            else if (slow) {
+                if (time % 10 == 0) {
+                    Log.d("inferencetimer","slow")
+                    val sscore = inference()
+                    detectorListener?.onResults(sscore)
+                }
+            }
+            else {
+                if (time % 5 == 0) {
+                    Log.d("inferencetimer","normal")
+//                    Log.d("time",time.toString())
+                    val score = inference()
+                    detectorListener?.onResults(score)
+                }
             }
         }
     }
@@ -147,11 +171,11 @@ class CarClassifier {
      * @property    THRESHOLD           threshold of the score to classify sound as a horn sound
      */
     companion object {
-        const val TAG = "CarClassifier"
+        const val TAG = "HonkClassifier"
 
         const val REFRESH_INTERVAL_MS = 33L
         const val YAMNET_MODEL = "yamnet_classification.tflite"
 
-        const val THRESHOLD = 0.3f
+        const val THRESHOLD = 0.5f
     }
 }
